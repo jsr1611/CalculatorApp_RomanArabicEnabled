@@ -7,14 +7,16 @@ public class Operation {
     private final int MUL = 1, DIV = 2, ADD = 3, SUB = 4;
     private final int[] arabicNumerals = {1000, 500, 100, 50, 10, 5, 1};
     private final String[] romanNumerals = {"M", "D", "C", "L", "X", "V", "I"};
-    private Integer operation;
 
     public Operation() {
     }
 
-    public Operation(String operation) throws Exception {
-        this.operation = getOperation(operation);
-        switch (this.operation) {
+    /*
+    do math operation based on given string line
+     */
+    public Operation(String operationString) throws Exception {
+        int operation = getOperation(operationString);
+        switch (operation) {
             case MUL:
                 result = Multiply(num1, num2);
                 break;
@@ -35,8 +37,9 @@ public class Operation {
     }
 
     private int getOperation(String operation) {
+        int operationNum = -1;
         if (operation.isEmpty())
-            return -1;
+            return operationNum;
 
         String[] values = operation.strip().split(" ");
         num1 = getNum(values[0]);
@@ -44,22 +47,22 @@ public class Operation {
 
         switch (values[1]) {
             case "*":
-                this.operation = MUL;
+                operationNum = MUL;
                 break;
             case "/":
-                this.operation = DIV;
+                operationNum = DIV;
                 break;
             case "+":
-                this.operation = ADD;
+                operationNum = ADD;
                 break;
             case "-":
-                this.operation = SUB;
+                operationNum = SUB;
                 break;
             default:
-                this.operation = -1;
+                operationNum = -1;
 
         }
-        return this.operation;
+        return operationNum;
     }
 
     private double getNum(String value) {
