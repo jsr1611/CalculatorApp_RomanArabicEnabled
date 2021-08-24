@@ -16,7 +16,7 @@ while (true) {
     operation = console.nextLine();
     try {
         Operation op = new Operation(operation);
-        System.out.println(operation + " = " + (String.format("%.2f", op.getResult() )));
+        System.out.printf("%.2f%n", op.getResult());
         break;
     } catch (Exception e) {
         System.out.println("Error: " + e);
