@@ -1,12 +1,11 @@
 package com.calculator;
 
 public class Operation {
-    private double result;
-    private double num1, num2;
 
-    private final int MUL = 1, DIV = 2, ADD = 3, SUB = 4;
-    private final int[] arabicNumerals = {1000, 500, 100, 50, 10, 5, 1};
-    private final String[] romanNumerals = {"M", "D", "C", "L", "X", "V", "I"};
+    private final int MUL = 1, DIV = 2, ADD = 3, SUB = 4, MOD = 5;
+    private DataPreprocessor dp;
+    private double result;
+
 
     public Operation() {
     }
@@ -15,114 +14,48 @@ public class Operation {
     do math operation based on given string line
      */
     public Operation(String operationString) throws Exception {
+        dp = new DataPreprocessor();
+
         int operation = getOperation(operationString);
+
+        double[] numbers = dp.getNumbers();
+
         switch (operation) {
             case MUL:
-                result = Multiply(num1, num2);
+                result = Multiply(numbers[0], numbers[1]);
                 break;
             case DIV:
-                result = Divide(num1, num2);
+                result = Divide(numbers[0], numbers[1]);
                 break;
             case ADD:
-                result = Addition(num1, num2);
+                result = Addition(numbers[0], numbers[1]);
                 break;
             case SUB:
-                result = Subtract(num1, num2);
+                result = Subtract(numbers[0], numbers[1]);
+                break;
+            case MOD:
+                result = Modulo(numbers[0], numbers[1]);
                 break;
             default:
-                throw new Exception("Wrong operation was given.");
+                throw new Exception("Wrong operation was given. Please, try again with the below format.\nExample Input:\nn + m\nn * m\nn * m\nn / m");
         }
-
-
     }
 
-    private int getOperation(String operation) {
+
+    private int getOperation(String operation) throws Exception {
         int operationNum = -1;
         if (operation.isEmpty())
             return operationNum;
 
         String[] values = operation.strip().split(" ");
-        num1 = getNum(values[0]);
-        num2 = getNum(values[2]);
+        operationNum = dp.getOperationNum(values);
 
-        switch (values[1]) {
-            case "*":
-                operationNum = MUL;
-                break;
-            case "/":
-                operationNum = DIV;
-                break;
-            case "+":
-                operationNum = ADD;
-                break;
-            case "-":
-                operationNum = SUB;
-                break;
-            default:
-                operationNum = -1;
-
-        }
+        // Check if valid input was given
+        if(values.length < 3)
+            return -1;
         return operationNum;
     }
 
-    private double getNum(String value) {
-        double num;
-        try {
-            num = Double.parseDouble(value);
-        } catch (Exception e) {
-            num = processRomeNumbers(value);
-        }
-        return num;
-    }
-
-    /*
-    Convert roman numerals to arabic ones.
-     */
-    private double processRomeNumbers(String value) {
-        int result = 0;
-        int correspondingNum = 0;
-        int numberOnTheRight = 0;
-        for (int i = value.length() - 1; i >= 0; i--) {
-            if (String.valueOf(value.charAt(i)).isEmpty())
-                continue;
-            try {
-                correspondingNum = arabicNumerals[getIndex(value.charAt(i))];
-            } catch (IndexOutOfBoundsException e) {
-                throw new ArithmeticException("Please enter valid numbers, either arabic or roman numerals are valid.");
-            }
-
-            if (i < value.length() - 1) {
-                result = numberOnTheRight <= correspondingNum ? result + correspondingNum : result - correspondingNum;
-            } else {
-                result = correspondingNum;
-            }
-            numberOnTheRight = correspondingNum;
-
-
-        }
-
-        return result;
-    }
-
-
-    /*
-    Get the index of roman numeral value in arabic numerals list.
-     */
-    private int getIndex(char romanNumeral) {
-        for (int i = 0; i < romanNumerals.length; i++) {
-            if (String.valueOf(romanNumeral).equals(romanNumerals[i])) {
-                // System.out.println("index is " + i + "for "+romanNumeral + "is equal to " + romanNumerals[i]);
-                return i;
-            }
-
-        }
-        // exception case
-        return -1;
-    }
-
-    public double getResult() {
-        return result;
-    }
 
     /*
     Multiplication method
@@ -156,5 +89,25 @@ public class Operation {
         return num1 - num2;
     }
 
+    /*
+    Modulo method
+     */
+    private double Modulo(double num1, double num2) {
+        if(num1>num2)
+            return (num1 / (int)num2);
+        else
+            return 0;
+    }
 
+    /*
+    Print the result to the screen
+     */
+    public void printResult() {
+        if(dp.isRoman())
+        {
+            System.out.println(dp.getRomanNum(result));
+        }
+        else
+            System.out.printf("%.2f%n", result);
+    }
 }
